@@ -92,6 +92,7 @@ class _MyHomePageState extends State<MyHomePage> {
           notification_history.isEmpty
               ? Center(child: Text("There is no notifcation arrived"))
               : ListView.builder(
+                itemCount: notification_history.length,
                 itemBuilder: (context, index) {
                   return ListTile(
                     leading: Icon(Icons.list),
