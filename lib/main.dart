@@ -36,6 +36,7 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   late FirebaseMessaging messaging;
   String? notificationText;
+  List<String> notification_history = []; // where we save notification history
   @override
   void initState() {
     super.initState();
@@ -45,15 +46,27 @@ class _MyHomePageState extends State<MyHomePage> {
       print(value);
     });
     FirebaseMessaging.onMessage.listen((RemoteMessage event) {
-      print("message recieved");
-      print(event.notification!.body);
-      print(event.data.values);
+      String notification_type =
+          event.data['type'] ??
+          'regular'; // if type is not found, it is regular
+      String notification_body =
+          event.notification?.body ??
+          'No Message'; // if there is no body, print No Message
+      setState(() {
+        notificationText = notification_body;
+        notification_history.add(notification_body);
+      });
+
       showDialog(
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-            title: Text("Notification"),
-            content: Text(event.notification!.body!),
+            title: Text(
+              notification_type == 'important'
+                  ? '❗ Important'
+                  : '🔔 Notification',
+            ),
+            content: Text(notification_body),
             actions: [
               TextButton(
                 child: Text("Ok"),
@@ -75,7 +88,17 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text(widget.title!)),
-      body: Center(child: Text("Messaging Tutorial")),
+      body:
+          notification_history.isEmpty
+              ? Center(child: Text("There is no notifcation arrived"))
+              : ListView.builder(
+                itemBuilder: (context, index) {
+                  return ListTile(
+                    leading: Icon(Icons.list),
+                    title: Text(notification_history[index]),
+                  );
+                },
+              ),
     );
   }
 }
