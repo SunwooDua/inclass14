@@ -22,6 +22,7 @@ class MessagingTutorial extends StatelessWidget {
       title: 'Firebase Messaging',
       theme: ThemeData(primarySwatch: Colors.blue),
       home: MyHomePage(title: 'Firebase Messaging'),
+      routes: {},
     );
   }
 }
